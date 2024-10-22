@@ -1,0 +1,123 @@
+/* Reset default browser styles */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #121212;
+    color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 100vh;
+}
+
+
+header {
+    width: 100%;
+    padding: 20px;
+    background-color: #1f1f1f;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+header h1 {
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+header p {
+    font-size: 16px;
+    color: #cccccc;
+}
+
+header p a {
+    color: #1e90ff;
+    text-decoration: none;
+}
+
+header p a:hover {
+    text-decoration: underline;
+}
+
+#qr-reader {
+    width: 100%;
+    max-width: 500px;
+    margin: 20px auto;
+    position: relative;
+}
+
+#qr-reader__dashboard {
+    background-color: #1f1f1f;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+#qr-reader__dashboard_section {
+    text-align: center;
+}
+
+#qr-reader__camera_selection {
+    background-color: #333;
+    color: #fff;
+    border: none;
+    padding: 8px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+}
+
+#qr-reader__dashboard_section_swaplink {
+    color: #1e90ff;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    margin-top: 10px;
+}
+
+#qr-reader__dashboard_section_swaplink:hover {
+    text-decoration: underline;
+}
+
+#qr-reader__dashboard_section button {
+    background-color: #1e90ff;
+    color: #fff;
+    border: none;
+    padding: 10px 15px;
+    margin: 5px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#qr-reader__dashboard_section button:hover {
+    background-color: #1c86ee;
+}
+
+#qr-result {
+    font-size: 18px;
+    margin: 20px;
+    text-align: center;
+    word-wrap: break-word;
+}
+
+#error-message {
+    color: #ff4d4d;
+    margin: 10px;
+    text-align: center;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    header h1 {
+        font-size: 20px;
+    }
+
+    #qr-result {
+        font-size: 16px;
+    }
+}

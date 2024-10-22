@@ -4,77 +4,17 @@
     <meta charset="UTF-8">
     <title>QR Code Scanner</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Link to external CSS -->
+    <link rel="stylesheet" href="/styles.css">
     <!-- Manifest for PWA -->
     <link rel="manifest" href="/manifest.json">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Poppins:400,600&display=swap" rel="stylesheet">
-    <!-- Custom Styles -->
-    <style>
-        /* Reset default browser styles */
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #121212;
-            color: #ffffff;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-            min-height: 100vh;
-        }
-
-        header {
-            width: 100%;
-            padding: 20px;
-            background-color: #1f1f1f;
-            text-align: center;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-        }
-
-        header h1 {
-            font-size: 24px;
-            font-weight: 600;
-        }
-
-        #qr-reader {
-            width: 100%;
-            max-width: 500px;
-            margin: 20px auto;
-        }
-
-        #qr-result {
-            font-size: 18px;
-            margin: 20px;
-            text-align: center;
-            word-wrap: break-word;
-        }
-
-        #error-message {
-            color: #ff4d4d;
-            margin: 10px;
-            text-align: center;
-        }
-
-        /* Responsive adjustments */
-        @media (max-width: 600px) {
-            header h1 {
-                font-size: 20px;
-            }
-
-            #qr-result {
-                font-size: 16px;
-            }
-        }
-    </style>
 </head>
 <body>
     <header>
         <h1>QR Code Scanner</h1>
+        <p>by <a href="https://bakry2.vercel.app/" target="_blank">Bakry</a></p>
     </header>
 
     <div id="qr-reader"></div>
@@ -83,65 +23,19 @@
 
     <!-- Include the html5-qrcode library -->
     <script src="https://unpkg.com/html5-qrcode@2.2.1/html5-qrcode.min.js"></script>
+    <!-- Link to external JavaScript file -->
+    <script src="/script.js"></script>
 
+    <!-- Service Worker Registration -->
     <script>
-        let scannerIsRunning = false;
-
-        function onScanSuccess(decodedText, decodedResult) {
-            if (!scannerIsRunning) {
-                return;
-            }
-            scannerIsRunning = false; // Stop further scanning
-
-            // Display the scanned QR code content
-            document.getElementById('qr-result').innerText = `QR Code Content: ${decodedText}`;
-
-            // Check if the scanned text is a URL
-            if (isValidURL(decodedText)) {
-                // Open the URL in a new tab
-                window.open(decodedText, '_blank');
-
-                // Optionally, you can navigate the current tab instead:
-                // window.location.href = decodedText;
-            } else {
-                alert('Scanned QR code is not a valid URL.');
-            }
-
-            // Stop the scanner
-            html5QrcodeScanner.clear();
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('service-worker.js')
+            .then(function(registration) {
+                console.log('Service Worker registered with scope:', registration.scope);
+            }).catch(function(error) {
+                console.log('Service Worker registration failed:', error);
+            });
         }
-
-        function onScanFailure(error) {
-            // Ignore scan errors for continuous scanning
-        }
-
-        function isValidURL(string) {
-            try {
-                new URL(string);
-                return true;
-            } catch (_) {
-                return false;
-            }
-        }
-
-        // Initialize the QR code scanner
-        let html5QrcodeScanner = new Html5QrcodeScanner(
-            "qr-reader",
-            {
-                fps: 10,
-                qrbox: { width: 250, height: 250 },
-                rememberLastUsedCamera: true,
-                showTorchButtonIfSupported: true
-            },
-            false
-        );
-
-        // Start the scanner and set the flag
-        html5QrcodeScanner.render(onScanSuccess, onScanFailure);
-        scannerIsRunning = true;
-
-        // Service Worker Registration
-        // (Same as before)
     </script>
 </body>
 </html>
