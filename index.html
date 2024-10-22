@@ -28,34 +28,49 @@
             font-weight: bold;
             color: #333;
         }
+        #error-message {
+            color: red;
+        }
     </style>
 </head>
 <body>
     <h1>QR Code Scanner</h1>
     <video id="preview"></video>
     <div id="qr-result">No QR code detected</div>
+    <div id="error-message"></div>
 
     <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
     <script>
         function startQRScanner() {
             const qrResult = document.getElementById('qr-result');
+            const errorMessage = document.getElementById('error-message');
+
             const html5QrCode = new Html5Qrcode("preview");
 
-            // QR Code scanner options
+            // Check if the browser supports media devices (camera access)
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                errorMessage.innerText = "Camera is not supported by your browser or permissions are not granted.";
+                return;
+            }
+
+            // Camera options: uses the back camera by default
+            const cameraOptions = { facingMode: "environment" };
             const qrCodeScannerConfig = {
                 fps: 10,    // Frames per second
                 qrbox: { width: 250, height: 250 }  // Scanning box dimensions
             };
 
-            html5QrCode.start({ facingMode: "environment" }, qrCodeScannerConfig,
+            // Request camera permission and start the QR code scanner
+            html5QrCode.start(cameraOptions, qrCodeScannerConfig,
                 (decodedText) => {
                     qrResult.innerHTML = `QR Code: ${decodedText}`;
                 },
-                (errorMessage) => {
-                    console.log(errorMessage);  // Log errors for debugging
+                (error) => {
+                    console.log(`QR scanning error: ${error}`);
                 })
-                .catch(err => {
-                    console.error("QR Code scanning failed", err);
+                .catch((err) => {
+                    console.error("Camera access failed", err);
+                    errorMessage.innerText = "Error accessing the camera. Please check if the camera permission is allowed.";
                 });
         }
 
