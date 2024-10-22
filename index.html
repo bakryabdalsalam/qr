@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f7f7f7">
+    <title>QR Code Scanner</title>
+    <link rel="manifest" href="/manifest.json">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f7f7f7;
+        }
+        video {
+            width: 100%;
+            max-width: 400px;
+            margin-bottom: 20px;
+            border: 2px solid #333;
+        }
+        #qr-result {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <h1>QR Code Scanner</h1>
+    <video id="preview"></video>
+    <div id="qr-result">No QR code detected</div>
+
+    <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
+    <script>
+        function startQRScanner() {
+            const qrResult = document.getElementById('qr-result');
+            const html5QrCode = new Html5Qrcode("preview");
+
+            // QR Code scanner options
+            const qrCodeScannerConfig = {
+                fps: 10,    // Frames per second
+                qrbox: { width: 250, height: 250 }  // Scanning box dimensions
+            };
+
+            html5QrCode.start({ facingMode: "environment" }, qrCodeScannerConfig,
+                (decodedText) => {
+                    qrResult.innerHTML = `QR Code: ${decodedText}`;
+                },
+                (errorMessage) => {
+                    console.log(errorMessage);  // Log errors for debugging
+                })
+                .catch(err => {
+                    console.error("QR Code scanning failed", err);
+                });
+        }
+
+        // Start scanning on page load
+        window.onload = () => {
+            startQRScanner();
+        };
+    </script>
+
+    <script>
+        // Register service worker for PWA
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/service-worker.js')
+            .then((registration) => {
+                console.log('Service Worker registered with scope:', registration.scope);
+            }).catch((error) => {
+                console.log('Service Worker registration failed:', error);
+            });
+        }
+    </script>
+</body>
+</html>
