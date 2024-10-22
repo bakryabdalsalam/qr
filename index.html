@@ -2,30 +2,32 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#f7f7f7">
     <title>QR Code Scanner</title>
-    <link rel="manifest" href="/manifest.json">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Manifest for PWA -->
+    <link rel="manifest" href="manifest.json">
     <style>
         body {
             font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f7f7f7;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #f7f7f7;
+            justify-content: flex-start;
+            min-height: 100vh;
         }
-        video {
+        h1 {
+            margin-top: 20px;
+        }
+        #qr-reader {
             width: 100%;
-            max-width: 400px;
-            margin-bottom: 20px;
-            border: 2px solid #333;
+            max-width: 500px;
+            margin: 20px;
         }
         #qr-result {
             font-size: 18px;
-            font-weight: bold;
             color: #333;
         }
         #error-message {
@@ -35,58 +37,60 @@
 </head>
 <body>
     <h1>QR Code Scanner</h1>
-    <video id="preview"></video>
-    <div id="qr-result">No QR code detected</div>
+    <div id="qr-reader"></div>
+    <div id="qr-result">No QR code detected.</div>
     <div id="error-message"></div>
 
-    <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
+    <!-- Include the html5-qrcode library -->
+    <script src="https://unpkg.com/html5-qrcode@2.2.1/html5-qrcode.min.js"></script>
+
     <script>
-        function startQRScanner() {
-            const qrResult = document.getElementById('qr-result');
-            const errorMessage = document.getElementById('error-message');
-
-            const html5QrCode = new Html5Qrcode("preview");
-
-            // Check if the browser supports media devices (camera access)
-            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-                errorMessage.innerText = "Camera is not supported by your browser or permissions are not granted.";
-                return;
+        function docReady(fn) {
+            // See if DOM is already available
+            if (document.readyState === "complete" || document.readyState === "interactive") {
+                // Call on next available tick
+                setTimeout(fn, 1);
+            } else {
+                document.addEventListener("DOMContentLoaded", fn);
             }
-
-            // Camera options: uses the back camera by default
-            const cameraOptions = { facingMode: "environment" };
-            const qrCodeScannerConfig = {
-                fps: 10,    // Frames per second
-                qrbox: { width: 250, height: 250 }  // Scanning box dimensions
-            };
-
-            // Request camera permission and start the QR code scanner
-            html5QrCode.start(cameraOptions, qrCodeScannerConfig,
-                (decodedText) => {
-                    qrResult.innerHTML = `QR Code: ${decodedText}`;
-                },
-                (error) => {
-                    console.log(`QR scanning error: ${error}`);
-                })
-                .catch((err) => {
-                    console.error("Camera access failed", err);
-                    errorMessage.innerText = "Error accessing the camera. Please check if the camera permission is allowed.";
-                });
         }
 
-        // Start scanning on page load
-        window.onload = () => {
-            startQRScanner();
-        };
+        docReady(function() {
+            var resultContainer = document.getElementById('qr-result');
+            var errorMessage = document.getElementById('error-message');
+
+            function onScanSuccess(decodedText, decodedResult) {
+                // Handle the scanned code as you like
+                console.log(`Code matched = ${decodedText}`, decodedResult);
+                resultContainer.innerText = `QR Code: ${decodedText}`;
+            }
+
+            function onScanFailure(error) {
+                // Handle scan failure, usually better to ignore and keep scanning
+                // console.warn(`Code scan error = ${error}`);
+            }
+
+            let html5QrcodeScanner = new Html5QrcodeScanner(
+                "qr-reader", 
+                { 
+                    fps: 10, 
+                    qrbox: 250,
+                    rememberLastUsedCamera: true,
+                    showTorchButtonIfSupported: true
+                },
+                /* verbose= */ false);
+
+            html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+        });
     </script>
 
+    <!-- Service Worker Registration -->
     <script>
-        // Register service worker for PWA
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/service-worker.js')
-            .then((registration) => {
+            navigator.serviceWorker.register('service-worker.js')
+            .then(function(registration) {
                 console.log('Service Worker registered with scope:', registration.scope);
-            }).catch((error) => {
+            }).catch(function(error) {
                 console.log('Service Worker registration failed:', error);
             });
         }
