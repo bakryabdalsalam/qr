@@ -6,86 +6,126 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Manifest for PWA -->
     <link rel="manifest" href="manifest.json">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Poppins:400,600&display=swap" rel="stylesheet">
+    <!-- Custom Styles -->
     <style>
-        body {
-            font-family: Arial, sans-serif;
+        /* Reset default browser styles */
+        * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            background-color: #f7f7f7;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #121212;
+            color: #ffffff;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: flex-start;
             min-height: 100vh;
         }
-        h1 {
-            margin-top: 20px;
+
+        header {
+            width: 100%;
+            padding: 20px;
+            background-color: #1f1f1f;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
         }
+
+        header h1 {
+            font-size: 24px;
+            font-weight: 600;
+        }
+
         #qr-reader {
             width: 100%;
             max-width: 500px;
-            margin: 20px;
+            margin: 20px auto;
         }
+
         #qr-result {
             font-size: 18px;
-            color: #333;
+            margin: 20px;
+            text-align: center;
+            word-wrap: break-word;
         }
+
         #error-message {
-            color: red;
+            color: #ff4d4d;
+            margin: 10px;
+            text-align: center;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            header h1 {
+                font-size: 20px;
+            }
+
+            #qr-result {
+                font-size: 16px;
+            }
         }
     </style>
 </head>
 <body>
-    <h1>QR Code Scanner</h1>
+    <header>
+        <h1>QR Code Scanner</h1>
+    </header>
+
     <div id="qr-reader"></div>
-    <div id="qr-result">No QR code detected.</div>
+    <div id="qr-result">Scan a QR code to get started.</div>
     <div id="error-message"></div>
 
     <!-- Include the html5-qrcode library -->
     <script src="https://unpkg.com/html5-qrcode@2.2.1/html5-qrcode.min.js"></script>
 
     <script>
-        function docReady(fn) {
-            // See if DOM is already available
-            if (document.readyState === "complete" || document.readyState === "interactive") {
-                // Call on next available tick
-                setTimeout(fn, 1);
+        function onScanSuccess(decodedText, decodedResult) {
+            // Display the scanned QR code content
+            document.getElementById('qr-result').innerText = `QR Code Content: ${decodedText}`;
+
+            // Check if the scanned text is a URL
+            if (isValidURL(decodedText)) {
+                // Open the URL in a new tab
+                window.open(decodedText, '_blank');
             } else {
-                document.addEventListener("DOMContentLoaded", fn);
+                alert('Scanned QR code is not a valid URL.');
             }
         }
 
-        docReady(function() {
-            var resultContainer = document.getElementById('qr-result');
-            var errorMessage = document.getElementById('error-message');
+        function onScanFailure(error) {
+            // Ignore scan errors for continuous scanning
+        }
 
-            function onScanSuccess(decodedText, decodedResult) {
-                // Handle the scanned code as you like
-                console.log(`Code matched = ${decodedText}`, decodedResult);
-                resultContainer.innerText = `QR Code: ${decodedText}`;
+        function isValidURL(string) {
+            try {
+                new URL(string);
+                return true;
+            } catch (_) {
+                return false;
             }
+        }
 
-            function onScanFailure(error) {
-                // Handle scan failure, usually better to ignore and keep scanning
-                // console.warn(`Code scan error = ${error}`);
-            }
+        // Initialize the QR code scanner
+        let html5QrcodeScanner = new Html5QrcodeScanner(
+            "qr-reader",
+            {
+                fps: 10,
+                qrbox: { width: 250, height: 250 },
+                rememberLastUsedCamera: true,
+                showTorchButtonIfSupported: true
+            },
+            false
+        );
 
-            let html5QrcodeScanner = new Html5QrcodeScanner(
-                "qr-reader", 
-                { 
-                    fps: 10, 
-                    qrbox: 250,
-                    rememberLastUsedCamera: true,
-                    showTorchButtonIfSupported: true
-                },
-                /* verbose= */ false);
+        html5QrcodeScanner.render(onScanSuccess, onScanFailure);
 
-            html5QrcodeScanner.render(onScanSuccess, onScanFailure);
-        });
-    </script>
-
-    <!-- Service Worker Registration -->
-    <script>
+        // Service Worker Registration
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('service-worker.js')
             .then(function(registration) {
