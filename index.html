@@ -73,9 +73,24 @@
     
             <section id="generator-section">
                 <h2>QR Code Generator</h2>
-                <input type="text" id="qr-text" placeholder="Enter text or URL">
-                <button id="generate-btn">Generate QR Code</button>
+                <div class="tab">
+                    <button class="tablinks active" onclick="openTab(event, 'textTab')">Text/URL</button>
+                    <button class="tablinks" onclick="openTab(event, 'fileTab')">File</button>
+                </div>
+    
+                <div id="textTab" class="tabcontent" style="display: block;">
+                    <input type="text" id="qr-text" placeholder="Enter text or URL">
+                    <button id="generate-text-btn">Generate QR Code</button>
+                </div>
+    
+                <div id="fileTab" class="tabcontent">
+                    <input type="file" id="qr-file" accept="*/*">
+                    <button id="generate-file-btn">Upload and Generate QR Code</button>
+                    <p id="file-upload-status"></p>
+                </div>
+    
                 <div id="qr-code"></div>
+                <button id="download-btn" style="display: none;">Download QR Code</button>
             </section>
         </main>
     
