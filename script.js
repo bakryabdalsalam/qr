@@ -12,10 +12,10 @@ function onScanSuccess(decodedText, decodedResult) {
 
     // Check if the scanned text is a URL
     if (isValidURL(decodedText)) {
-        // Ask user if they want to open the link
-        if (confirm('Open this link?\n' + decodedText)) {
-            window.open(decodedText, '_blank');
-        }
+        // Open the URL in a new tab
+        window.open(decodedText, '_blank');
+    } else {
+        alert('Scanned QR code content: ' + decodedText);
     }
 
     // Stop the scanner
@@ -52,13 +52,16 @@ html5QrcodeScanner.render(onScanSuccess, onScanFailure);
 scannerIsRunning = true;
 
 // QR Code Generator Section
-const generateBtn = document.getElementById('generate-btn');
+const generateTextBtn = document.getElementById('generate-text-btn');
+const generateFileBtn = document.getElementById('generate-file-btn');
 const downloadBtn = document.getElementById('download-btn');
 const qrTextInput = document.getElementById('qr-text');
+const qrFileInput = document.getElementById('qr-file');
 const qrCodeContainer = document.getElementById('qr-code');
 let qrCode;
 
-generateBtn.addEventListener('click', () => {
+// Generate QR Code from Text or URL
+generateTextBtn.addEventListener('click', () => {
     const text = qrTextInput.value.trim();
     if (text) {
         // Clear previous QR Code
@@ -79,6 +82,51 @@ generateBtn.addEventListener('click', () => {
     }
 });
 
+// Generate QR Code from File Upload
+generateFileBtn.addEventListener('click', () => {
+    const file = qrFileInput.files[0];
+    if (file) {
+        const formData = new FormData();
+        formData.append('file', file);
+
+        // Upload file to server
+        fetch('/upload', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const fileUrl = data.fileUrl;
+
+                // Clear previous QR Code
+                qrCodeContainer.innerHTML = "";
+                downloadBtn.style.display = "none";
+
+                // Generate QR Code linking to the uploaded file
+                qrCode = new QRCode(qrCodeContainer, {
+                    text: fileUrl,
+                    width: 250,
+                    height: 250,
+                    colorDark: "#ffffff",
+                    colorLight: "#1f1f1f",
+                    correctLevel: QRCode.CorrectLevel.H
+                });
+                downloadBtn.style.display = "block";
+                document.getElementById('file-upload-status').innerText = "File uploaded successfully!";
+            } else {
+                alert('File upload failed.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred during file upload.');
+        });
+    } else {
+        alert('Please select a file to upload.');
+    }
+});
+
 // Download the generated QR Code
 downloadBtn.addEventListener('click', () => {
     if (qrCode) {
@@ -92,3 +140,18 @@ downloadBtn.addEventListener('click', () => {
         }
     }
 });
+
+// Tab functionality
+function openTab(evt, tabName) {
+    var i, tabcontent, tablinks;
+    tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+    }
+    tablinks = document.getElementsByClassName("tablinks");
+    for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+    document.getElementById(tabName).style.display = "block";
+    evt.currentTarget.className += " active";
+}
