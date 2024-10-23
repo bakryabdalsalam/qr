@@ -79,7 +79,13 @@ section h2 {
     word-wrap: break-word;
 }
 
-#qr-text, #qr-file {
+#error-message {
+    color: #ff4d4d;
+    margin: 10px;
+    text-align: center;
+}
+
+#qr-text {
     width: 100%;
     padding: 12px;
     font-size: 16px;
@@ -90,7 +96,7 @@ section h2 {
     color: #fff;
 }
 
-#generate-text-btn, #generate-file-btn, #download-btn {
+#generate-btn, #download-btn {
     width: 100%;
     padding: 12px;
     font-size: 18px;
@@ -101,7 +107,7 @@ section h2 {
     cursor: pointer;
 }
 
-#generate-text-btn:hover, #generate-file-btn:hover, #download-btn:hover {
+#generate-btn:hover, #download-btn:hover {
     background-color: #1c86ee;
 }
 
@@ -155,44 +161,6 @@ footer a:hover {
     background-color: #1c86ee !important;
 }
 
-/* Tabs */
-.tab {
-    overflow: hidden;
-    border-bottom: 1px solid #ccc;
-    margin-bottom: 20px;
-}
-
-.tab button {
-    background-color: inherit;
-    float: left;
-    border: none;
-    outline: none;
-    cursor: pointer;
-    padding: 14px 16px;
-    transition: 0.3s;
-    color: #fff;
-    font-size: 16px;
-}
-
-.tab button:hover {
-    background-color: #1c1c1c;
-}
-
-.tab button.active {
-    background-color: #1e90ff;
-}
-
-.tabcontent {
-    display: none;
-}
-
-#file-upload-status {
-    color: #1e90ff;
-    text-align: center;
-    margin-top: 10px;
-}
-
-/* Responsive adjustments */
 @media (max-width: 600px) {
     header h1 {
         font-size: 24px;
@@ -202,7 +170,7 @@ footer a:hover {
         font-size: 20px;
     }
 
-    #generate-text-btn, #generate-file-btn, #download-btn {
+    #generate-btn, #download-btn {
         font-size: 16px;
     }
 }
