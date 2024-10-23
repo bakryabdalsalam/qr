@@ -1,3 +1,4 @@
+// QR Code Scanner Section
 let scannerIsRunning = false;
 
 function onScanSuccess(decodedText, decodedResult) {
@@ -9,12 +10,11 @@ function onScanSuccess(decodedText, decodedResult) {
     // Display the scanned QR code content
     document.getElementById('qr-result').innerText = `QR Code Content: ${decodedText}`;
 
-    // Check if the scanned text is a URL
+    // Optionally, open the URL if it's a valid link
     if (isValidURL(decodedText)) {
-        // Open the URL in a new tab
-        window.open(decodedText, '_blank');
-    } else {
-        alert('Scanned QR code is not a valid URL.');
+        if (confirm('Open this link?\n' + decodedText)) {
+            window.open(decodedText, '_blank');
+        }
     }
 
     // Stop the scanner
@@ -49,3 +49,28 @@ let html5QrcodeScanner = new Html5QrcodeScanner(
 // Start the scanner and set the flag
 html5QrcodeScanner.render(onScanSuccess, onScanFailure);
 scannerIsRunning = true;
+
+// QR Code Generator Section
+const generateBtn = document.getElementById('generate-btn');
+const qrText = document.getElementById('qr-text');
+const qrCodeContainer = document.getElementById('qr-code');
+let qrCode;
+
+generateBtn.addEventListener('click', () => {
+    const text = qrText.value.trim();
+    if (text) {
+        // Clear previous QR Code
+        qrCodeContainer.innerHTML = "";
+        // Generate new QR Code
+        qrCode = new QRCode(qrCodeContainer, {
+            text: text,
+            width: 250,
+            height: 250,
+            colorDark: "#ffffff",
+            colorLight: "#1f1f1f",
+            correctLevel: QRCode.CorrectLevel.H
+        });
+    } else {
+        alert('Please enter text or URL to generate QR code.');
+    }
+});

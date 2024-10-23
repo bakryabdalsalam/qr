@@ -57,31 +57,49 @@
         <link href="https://fonts.googleapis.com/css?family=Poppins:400,600&display=swap" rel="stylesheet">
     </head>
     
-<body>
-    <header>
-        <h1>QR Code Scanner</h1>
-        <p>by <a href="https://bakry2.vercel.app/" target="_blank">Bakry</a></p>
-    </header>
-
-    <div id="qr-reader"></div>
-    <div id="qr-result">Scan a QR code to get started.</div>
-    <div id="error-message"></div>
-
-    <!-- Include the html5-qrcode library -->
-    <script src="https://unpkg.com/html5-qrcode@2.2.1/html5-qrcode.min.js"></script>
-    <!-- Link to external JavaScript file -->
-    <script src="script.js"></script>
-
-    <!-- Service Worker Registration -->
-    <script>
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('service-worker.js')
-            .then(function(registration) {
-                console.log('Service Worker registered with scope:', registration.scope);
-            }).catch(function(error) {
-                console.log('Service Worker registration failed:', error);
-            });
-        }
-    </script>
-</body>
+    <body>
+        <header>
+            <h1>QR Code Scanner & Generator</h1>
+            <p>by <a href="https://bakry2.vercel.app/" target="_blank">Bakry</a></p>
+        </header>
+    
+        <main>
+            <section id="scanner-section">
+                <h2>QR Code Scanner</h2>
+                <div id="qr-reader"></div>
+                <div id="qr-result">Scan a QR code to get started.</div>
+                <div id="error-message"></div>
+            </section>
+    
+            <section id="generator-section">
+                <h2>QR Code Generator</h2>
+                <input type="text" id="qr-text" placeholder="Enter text or URL">
+                <button id="generate-btn">Generate QR Code</button>
+                <div id="qr-code"></div>
+            </section>
+        </main>
+    
+        <footer>
+            <p>&copy; 2023 <a href="https://bakry2.vercel.app/" target="_blank">Bakry</a>. All rights reserved.</p>
+        </footer>
+    
+        <!-- Include the html5-qrcode library -->
+        <script src="https://unpkg.com/html5-qrcode@2.2.1/html5-qrcode.min.js"></script>
+        <!-- Include the QRCode.js library -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+        <!-- Link to external JavaScript file -->
+        <script src="script.js"></script>
+    
+        <!-- Service Worker Registration -->
+        <script>
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('service-worker.js')
+                .then(function(registration) {
+                    console.log('Service Worker registered with scope:', registration.scope);
+                }).catch(function(error) {
+                    console.log('Service Worker registration failed:', error);
+                });
+            }
+        </script>
+    </body>
 </html>
